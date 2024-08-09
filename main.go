@@ -2,35 +2,53 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"md2html/utils"
+	"os"
+	"slices"
+	"strings"
 )
 
 func main() {
-	file := utils.ReadFile("example.md")
+	var name string
+	if len(os.Args) > 1 {
+		name = os.Args[1]
+	} else {
+		name = "example.md"
+	}
+	file := utils.ReadFile(name)
 	lines := strings.Split(file, "\n")
 	numLists := 0
-	newFile := ""
+	newFile := []string{"<html>", "<body>"}
 	for _, line := range lines {
 		switch {
 		case utils.StartsWith(line, '#'):
 			header := replaceHeader(line)
-			newFile += header
+			newFile = append(newFile, header)
 		case utils.StartsWith(line, '-'):
 			if numLists < 1 {
-				newFile += "<ul>\n"
+				newFile = append(newFile, "<ul>\n")
 				numLists++
 			}
 			item := convertListItem(line)
-			newFile += fmt.Sprintf("\t%s", item)
+			newFile = append(newFile, fmt.Sprintf("\t%s", item))
 		default:
 			if numLists > 0 {
-				newFile += "</ul>"
+				newFile = append(newFile, "</ul>\n")
 				numLists--
 			}
 		}
 	}
-	fmt.Println(newFile)
+	newFile = utils.TrimLines(newFile)
+	temp := slices.Concat(newFile, []string{"</body>", "</html>"})
+	result := strings.Join(temp, "\n")
+	result = indentInnerLines(result)
+	path := utils.ExtractFileName(name)+ ".html"
+	err := utils.WriteFile(path, result)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Printf("'%s' written succesfully!\n", path)
+	}
 }
 
 func replaceHeader(line string) string {
@@ -48,12 +66,15 @@ func convertListItem(line string) string {
 	return result
 }
 
-func constructUnorderedList(lines []string) string {
-	result := "<ul>\n"
-	for _, line := range lines {
-		temp := convertListItem(line)
-		result += fmt.Sprintf("\t%s\n", temp)
+func indentInnerLines(file string) string {
+	result := ""
+	lines := strings.Split(file, "\n")
+	for i, line := range lines {
+		if i > 1 && i < len(lines)-2 {
+			result += fmt.Sprintf("\t%s\n", line)
+		} else {
+			result += fmt.Sprintf("%s\n", line)
+		}
 	}
-	result += "</ul>"
 	return result
 }

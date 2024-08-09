@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 func ReadFile(path string) string {
@@ -14,11 +15,12 @@ func ReadFile(path string) string {
 	return string(file)
 }
 
-func WriteFile(path string, contents string) {
+func WriteFile(path string, contents string) error {
 	err := os.WriteFile(path, []byte(contents), 0644)
 	if err != nil {
-		fmt.Println("Unable to write file:", err)
+		return fmt.Errorf("Unable to write file: %s", err)
 	}
+	return nil
 }
 
 func StartsWith(line string, c rune) bool {
@@ -29,4 +31,20 @@ func StartsWith(line string, c rune) bool {
 		return cur == c
 	}
 	return false
+}
+
+func ExtractFileName(filename string) string {
+	idx := strings.LastIndex(filename, ".")
+	return filename[:idx]
+}
+
+func TrimLines(lines []string) []string {
+	result := make([]string, 0)
+	for _, line := range lines {
+		if len(line) == 0 || strings.Trim(line, " \n") == "" {
+			continue
+		}
+		result = append(result, strings.Trim(line, " \n"))
+	}
+	return result
 }
