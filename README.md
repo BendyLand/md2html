@@ -8,4 +8,4 @@ A basic Markdown to HTML converter tool!
 
 ## About
 
-I didn't have much reason to make this beyond my enjoyment of CLI tools and text parsing. I wouldn't recommend relying on it for critical functionality, but I'll still try to make it work the best I can.
+I dont't have much reason to make this beyond my enjoyment of CLI tools and text parsing. I wouldn't recommend relying on it for critical functionality, but I'll still try to make it work the best I can.
