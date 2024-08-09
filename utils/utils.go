@@ -20,3 +20,13 @@ func WriteFile(path string, contents string) {
 		fmt.Println("Unable to write file:", err)
 	}
 }
+
+func StartsWith(line string, c rune) bool {
+	for _, cur := range line {
+		if cur == ' ' { 
+			continue
+		}
+		return cur == c
+	}
+	return false
+}
