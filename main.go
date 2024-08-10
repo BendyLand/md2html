@@ -38,12 +38,7 @@ func main() {
 			}
 		}
 	}
-	newFile = utils.TrimLines(newFile)
-	temp := slices.Concat(newFile, []string{"</body>", "</html>"})
-	result := strings.Join(temp, "\n")
-	result = indentInnerLines(result)
-	path := utils.ExtractFileName(name)+ ".html"
-	err := utils.WriteFile(path, result)
+	path, err := writeToFile(newFile, name)
 	if err != nil {
 		fmt.Println(err)
 	} else {
@@ -77,4 +72,14 @@ func indentInnerLines(file string) string {
 		}
 	}
 	return result
+}
+
+func writeToFile(file []string, name string) (string, error) {
+	file = utils.TrimLines(file)
+	temp := slices.Concat(file, []string{"</body>", "</html>"})
+	result := strings.Join(temp, "\n")
+	result = indentInnerLines(result)
+	path := utils.ExtractFileName(name)+ ".html"
+	err := utils.WriteFile(path, result)
+	return path, err
 }
