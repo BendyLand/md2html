@@ -35,6 +35,10 @@ func main() {
 			if numLists > 0 {
 				newFile = append(newFile, "</ul>\n")
 				numLists--
+			} else {
+				if len(line) > 0 {
+					newFile = append(newFile, "<p>"+line+"</p>")
+				}
 			}
 		}
 	}
@@ -79,7 +83,7 @@ func writeToFile(file []string, name string) (string, error) {
 	temp := slices.Concat(file, []string{"</body>", "</html>"})
 	result := strings.Join(temp, "\n")
 	result = indentInnerLines(result)
-	path := utils.ExtractFileName(name)+ ".html"
+	path := utils.ExtractFileName(name) + ".html"
 	err := utils.WriteFile(path, result)
 	return path, err
 }
